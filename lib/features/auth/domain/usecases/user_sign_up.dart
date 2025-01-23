@@ -1,23 +1,17 @@
-import 'package:blog_app/core/exception/server_exception.dart';
 import 'package:blog_app/core/failure/failure.dart';
 import 'package:blog_app/core/usecase/usecase.dart';
+import 'package:blog_app/features/auth/domain/entities/user.dart';
 import 'package:blog_app/features/auth/domain/repository/auth_repository.dart';
 import 'package:fpdart/fpdart.dart';
 
-class UserSignUp implements Usecase<String, UserSignUpParameters> {
+class UserSignUp implements Usecase<User, UserSignUpParameters> {
   final AuthRepository authRepository;
   UserSignUp({required this.authRepository});
 
   @override
-  Future<Either<Failure, String>> call(UserSignUpParameters params) async {
-    try {
-      final res = await authRepository.signupWithEmailPassword(
-          name: params.name, email: params.email, password: params.password);
-
-      return right(res.toString());
-    } on ServerException catch (e) {
-      return left(Failure(e.toString()));
-    }
+  Future<Either<Failure, User>> call(UserSignUpParameters params) async {
+    return authRepository.signupWithEmailPassword(
+        name: params.name, email: params.email, password: params.password);
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:blog_app/common/loader.dart';
 import 'package:blog_app/constants/style.dart';
 import 'package:blog_app/core/pallete.dart';
 import 'package:blog_app/features/auth/presentation/bloc/auth_bloc.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupScreen extends StatefulWidget {
-  SignupScreen({super.key});
+  const SignupScreen({super.key});
 
   @override
   State<SignupScreen> createState() => _SignupScreenState();
@@ -45,9 +46,15 @@ class _SignupScreenState extends State<SignupScreen> {
             padding: EdgeInsets.all(12.0),
             child: BlocConsumer<AuthBloc, AuthState>(
               listener: (context, state) {
-                // TODO: implement listener
+                if (state is AuthFailure) {
+                  showSnackBar(context, state.message);
+                }
               },
               builder: (context, state) {
+                if (state is AuthLoading) {
+                  return const Loader();
+                }
+
                 return Form(
                   key: _formKey,
                   child: Column(
@@ -140,6 +147,10 @@ class _SignupScreenState extends State<SignupScreen> {
                                   name: nameController.text.trim(),
                                   email: emailController.text,
                                   password: passwordController.text));
+                              nameController.clear();
+                              passwordController.clear();
+                              confirmPasswordController.clear();
+                              emailController.clear();
                             }
                           }
                         },
